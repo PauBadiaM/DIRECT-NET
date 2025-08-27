@@ -202,7 +202,7 @@ generate_aggregated_data <- function (object, cell_coord, k_neigh = 50, atacbina
 estimateSizeFactorsForMatrix <- function(counts, locfunc = median, round_exprs=TRUE,  method="mean-geometric-mean-total")
 {
   #library("slam")
-  if (isSparseMatrix(counts)){
+  if (inherits(counts, 'sparseMatrix')){
     estimateSizeFactorsForSparseMatrix(counts, locfunc = locfunc, round_exprs=round_exprs, method=method)
   }else{
     estimateSizeFactorsForDenseMatrix(counts, locfunc = locfunc, round_exprs=round_exprs,  method=method)
@@ -438,7 +438,7 @@ dmode <- function(x, breaks="Sturges") {
 #' @importFrom cicero find_overlapping_coordinates
 #' @return a Seurat object with new links assay.
 #' @export
-Run_DIRECT_NET <- function(object,peakcalling = FALSE, macs2.path = NULL, fragments = NULL, k_neigh = 50, atacbinary = TRUE, max_overlap=0.8, reduction.name = NULL, size_factor_normalize = FALSE, genome.info, focus_markers, params = NULL, nthread = 2, early_stop = FALSE, HC_cutoff = NULL, LC_cutoff = NULL, rescued = FALSE,seed = 123, verbose = TRUE) {
+Run_DIRECT_NET <- function(object,peakcalling = FALSE, macs2.path = NULL, fragments = NULL, k_neigh = 50, atacbinary = TRUE, max_overlap=0.8, reduction.name = NULL, size_factor_normalize = FALSE, genome.info, focus_markers, params = NULL, nthread = 2, early_stop = FALSE, HC_cutoff = NULL, LC_cutoff = NULL, rescued = FALSE,seed = 123, verbose = TRUE, window = 250000) {
     ########################################################### step 0. Peak calling
     
     if(peakcalling) {
@@ -543,7 +543,7 @@ Run_DIRECT_NET <- function(object,peakcalling = FALSE, macs2.path = NULL, fragme
     }
 
     p1 <- paste(Chr[i],":",Starts[i]-500,"-",Starts[i],sep = "")
-    p2 <- paste(Chr[i],":",Starts[i]-250000,"-",Starts[i]+250000,sep = "")
+    p2 <- paste(Chr[i],":",Starts[i]-window,"-",Starts[i]+window,sep = "")
     promoters <- find_overlapping_coordinates(peaks, p1)
     enhancers <- find_overlapping_coordinates(peaks, p2)
     enhancers <- setdiff(enhancers,promoters)
